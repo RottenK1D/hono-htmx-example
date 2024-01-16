@@ -1,0 +1,23 @@
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production build files
+/dist
+
+# IDE / Editor directories
+.idea/
+.vscode/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
