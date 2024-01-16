@@ -24,21 +24,38 @@ const Layout = (props: SiteData) => html`
   <meta property="og:title" content="${props.title}">
   <meta property="og:image" content="${props.image}">
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
   ${props.children}
-</body>
 </html>
 `;
 
+type Todo = {
+	id: number;
+	text: string;
+	completed: boolean;
+};
+
+const db: Todo[] = [
+	{ id: 1, text: "Buy groceries", completed: false },
+	{ id: 2, text: "Walk the dog", completed: true },
+	{ id: 3, text: "Do laundry", completed: false },
+];
+
 const Content = (props: { siteData: SiteData; name: string }) => (
 	<Layout {...props.siteData}>
-		<body>
-			<h1>Hello, {props.name}!</h1>
-			<button hx-post="/clicked" hx-swap="outerHTML" type="button">
+		<div class="flex flex-col items-center justify-center h-creeen">
+			<h1 class="text-center text-2xl">Hello, {props.name}!</h1>
+			<button
+				hx-post="/clicked"
+				hx-swap="outerHTML"
+				type="button"
+				class="font-bold p-4 border-2 border-gray-300"
+			>
 				Click me
 			</button>
-		</body>
+		</div>
 	</Layout>
 );
 
