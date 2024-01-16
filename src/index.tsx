@@ -59,6 +59,28 @@ const Content = (props: { siteData: SiteData; name: string }) => (
 	</Layout>
 );
 
+const TodoItem = ({ text, completed, id }: Todo) => {
+	return (
+		<div class="flex space-x-3">
+			<p>{text}</p>
+			<input type="checkbox" checked={completed} />
+			<button class="text-red-500" type="button">
+				X
+			</button>
+		</div>
+	);
+};
+
+const TodoList = ({ todos }: { todos: Todo[] }) => {
+	return (
+		<div>
+			{todos.map((todo) => (
+				<TodoItem {...todo} />
+			))}
+		</div>
+	);
+};
+
 // app.use("*", cors());
 app.get("/", (c) => {
 	const props = {
@@ -74,6 +96,10 @@ app.get("/", (c) => {
 
 app.post("/clicked", (c) => {
 	return c.html(<h1>Clicked!</h1>);
+});
+
+app.get("/todos", (c) => {
+	return c.html(<TodoList todos={db} />);
 });
 
 export default app;
