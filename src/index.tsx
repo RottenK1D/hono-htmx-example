@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { html } from "hono/html";
+import { cors } from "hono/cors";
 import { FC } from "hono/jsx";
 
 const app = new Hono();
@@ -22,6 +23,7 @@ const Layout = (props: SiteData) => html`
   <!-- More elements slow down JSX, but not template literals. -->
   <meta property="og:title" content="${props.title}">
   <meta property="og:image" content="${props.image}">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
   ${props.children}
@@ -31,10 +33,16 @@ const Layout = (props: SiteData) => html`
 
 const Content = (props: { siteData: SiteData; name: string }) => (
 	<Layout {...props.siteData}>
-		<h1>Hello, {props.name}!</h1>
+		<body>
+			<h1>Hello, {props.name}!</h1>
+			<button hx-post="/clicked" hx-swap="outerHTML" type="button">
+				Click me
+			</button>
+		</body>
 	</Layout>
 );
 
+// app.use("*", cors());
 app.get("/", (c) => {
 	const props = {
 		name: "Hono",
@@ -45,6 +53,10 @@ app.get("/", (c) => {
 		} as SiteData,
 	};
 	return c.html(<Content {...props} />);
+});
+
+app.post("/clicked", (c) => {
+	return c.html(<h1>Clicked!</h1>);
 });
 
 export default app;
