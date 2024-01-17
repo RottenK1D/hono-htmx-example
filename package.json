@@ -1,9 +1,12 @@
 {
 	"scripts": {
-		"dev": "bun run --hot src/index.tsx"
+		"dev": "wrangler dev --live-reload src/index.tsx",
+		"deploy": "wrangler deploy --minify src/index.tsx"
 	},
 	"dependencies": {
-		"hono": "^3.12.5"
+		"@cloudflare/workers-types": "^4.20231218.0",
+		"hono": "^3.12.5",
+		"wrangler": "^3.22.5"
 	},
 	"devDependencies": {
 		"@types/bun": "^1.0.0"

@@ -1,7 +1,7 @@
 import { html } from "hono/html";
 import { jsxRenderer } from "hono/jsx-renderer";
 
-interface Todo {
+export interface Todo {
 	id: number;
 	title: string;
 }
