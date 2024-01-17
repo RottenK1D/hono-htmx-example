@@ -1,7 +1,5 @@
 import { Hono } from "hono";
 import { html } from "hono/html";
-import { cors } from "hono/cors";
-import { FC } from "hono/jsx";
 
 const app = new Hono();
 
@@ -43,19 +41,14 @@ const db: Todo[] = [
 	{ id: 3, text: "Do laundry", completed: false },
 ];
 
-const Content = (props: { siteData: SiteData; name: string }) => (
+const Content = (props: { siteData: SiteData }) => (
 	<Layout {...props.siteData}>
-		<div class="flex flex-col items-center justify-center h-creeen">
-			<h1 class="text-center text-2xl">Hello, {props.name}!</h1>
-			<button
-				hx-post="/clicked"
-				hx-swap="outerHTML"
-				type="button"
-				class="font-bold p-4 border-2 border-gray-300"
-			>
-				Click me
-			</button>
-		</div>
+		<div
+			class="flex flex-col items-center justify-center h-creeen"
+			hx-get="/todos"
+			hx-trigger="load"
+			hx-swap="innerHTML"
+		/>
 	</Layout>
 );
 
@@ -63,8 +56,20 @@ const TodoItem = ({ text, completed, id }: Todo) => {
 	return (
 		<div class="flex space-x-3">
 			<p>{text}</p>
-			<input type="checkbox" checked={completed} />
-			<button class="text-red-500" type="button">
+			<input
+				type="checkbox"
+				checked={completed}
+				hx-post={`/todos/${id}`}
+				hx-target="closest div"
+				hx-swap="outerHTML"
+			/>
+			<button
+				class="text-red-500"
+				type="button"
+				hx-delete={`/todos/${id}`}
+				hx-swap="outerHTML"
+				hx-target="closest div"
+			>
 				X
 			</button>
 		</div>
@@ -81,7 +86,6 @@ const TodoList = ({ todos }: { todos: Todo[] }) => {
 	);
 };
 
-// app.use("*", cors());
 app.get("/", (c) => {
 	const props = {
 		name: "Hono",
@@ -99,7 +103,34 @@ app.post("/clicked", (c) => {
 });
 
 app.get("/todos", (c) => {
-	return c.html(<TodoList todos={db} />);
+	return c.text(<TodoList todos={db} />);
+});
+
+app.post("/todos/:id", (c) => {
+	const id = c.req.param("id");
+	const todo = db.find((t) => t.id === Number(id));
+	if (!todo) {
+		return c.text("Not found", 404);
+	}
+
+	if (todo) {
+		todo.completed = !todo.completed;
+	}
+	return c.html(<TodoItem {...todo} />);
+});
+
+app.delete("/todos/:id", (c) => {
+	const id = c.req.param("id");
+	const todo = db.find((t) => t.id === Number(id));
+	if (!todo) {
+		return c.text("Not found", 404);
+	}
+
+	if (todo) {
+		db.splice(db.indexOf(todo), 1);
+	}
+
+	return c.text("");
 });
 
 export default app;
